@@ -1,0 +1,34 @@
+name = "misub-panel"
+main = "src/index.ts"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Secrets (wrangler secret put, never commit values):
+#   MISUB_BASE_URL, MISUB_EXT_TOKEN, MISUB_PROFILE_TOKEN, SESSION_SECRET, IP_HASH_SALT
+
+[triggers]
+# hourly: refresh MiSub profile userInfo; daily 03:17 UTC: expire + cleanup (gated in scheduled())
+crons = ["0 * * * *", "17 3 * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "misub-panel"
+migrations_dir = "migrations"
+# database_id = "" # fill after: wrangler d1 create misub-panel
+
+[[kv_namespaces]]
+binding = "KV"
+# id = "" # fill after: wrangler kv namespace create KV
+# KV is for low-frequency config data only. Token/subscription caches use Cache API:
+# the free plan allows only 1,000 KV writes per day.
+
+[[r2_buckets]]
+binding = "THEMES_BUCKET"
+bucket_name = "misub-panel-themes"
+
+[durable_objects]
+bindings = [{ name = "DEVICE_TRACKER", class_name = "DeviceTracker" }]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DeviceTracker"]

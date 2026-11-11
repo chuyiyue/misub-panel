@@ -1,0 +1,1 @@
+{"name":"misub-panel","packageManager":"pnpm@9.15.0","private":true,"scripts":{"check":"pnpm -r --if-present run check","dev":"pnpm --filter @misub-panel/worker dev"},"version":"0.1.0"}
